@@ -1,46 +1,77 @@
 *** Settings ***
-Documentation   A test suite for the test cases for the SauceDemo website 
+Documentation   Resources to be used in Test Cases
 ...
 ...             This test follows the example using keywords fomr the SeleniumLibary
 ...             
 Library         SeleniumLibrary
+Library         Collections
 
-*** Test Cases ***
-1
-    Open Browser    https://www.saucedemo.com/  chrome
-    Maximize browser Window
-    Input Text  user-name       standard_user
-    Input Text  password        secret_sauce
-    Click Button    login-button
-    Element Text Should Be  class:title     PRODUCTS
-    [Teardown]  Close Browser
+*** Variables ***
+@{ASC}
+    ...     Sauce Labs Backpack
+    ...     Sauce Labs Bike Light
+    ...     Sauce Labs Bolt T-Shirt
+    ...     Sauce Labs Fleece Jacket
+    ...     Sauce Labs Onesie
+    ...     Test.allTheThings() T-Shirt (Red)
 
-2
-    Open Browser    https://www.saucedemo.com/  chrome
-    Maximize browser Window
-    Input Text  user-name       locked_out_user
-    Input Text  password        secret_sauce
-    Click Button    login-button
-    Element Text Should Be  class:error-message-container     Epic sadface: Sorry, this user has been locked out.
-    [Teardown]  Close Browser
+@{DEC}
+    ...     Test.allTheThings() T-Shirt (Red)
+    ...     Sauce Labs Onesie
+    ...     Sauce Labs Fleece Jacket
+    ...     Sauce Labs Bolt T-Shirt
+    ...     Sauce Labs Bike Light
+    ...     Sauce Labs Backpack
 
-3
-    Open Browser    https://www.saucedemo.com/  chrome
-    Maximize browser Window
-    Input Text  user-name       standard_user
-    Input Text  password        s3cret_sauce
-    Click Button    login-button
-    Element Text Should Be  class:error-message-container     Epic sadface: Username and password do not match any user in this service
-    [Teardown]  Close Browser
+@{LOHI}
+    ...     Sauce Labs Onesie
+    ...     Sauce Labs Bike Light
+    ...     Sauce Labs Bolt T-Shirt
+    ...     Test.allTheThings() T-Shirt (Red)
+    ...     Sauce Labs Backpack
+    ...     Sauce Labs Fleece Jacket
 
-3
-    Open Browser    https://www.saucedemo.com/  chrome
-    Maximize browser Window
-    Input Text  user-name       problem_user
-    Input Text  password        secret_sauce
-    Click Button    login-button
-    Element Text Should Be  class:error-message-container     Epic sadface: Username and password do not match any user in this service
-    [Teardown]  Close Browser
+@{HILO}
+    ...     Sauce Labs Fleece Jacket
+    ...     Sauce Labs Backpack
+    ...     Sauce Labs Bolt T-Shirt
+    ...     Test.allTheThings() T-Shirt (Red)
+    ...     Sauce Labs Bike Light
+    ...     Sauce Labs Onesie
 
-4
-    
+*** Keywords ***
+Check ASC Order
+    ${i}=   Set Variable    0
+    ${weblist}=     Get WebElements     class:inventory_item_name
+    FOR     ${element}  IN  @{weblist}
+        ${temp}=    Get From List       ${ASC}      ${i}
+        Should Be Equal     ${element.text}     ${temp}
+        ${i}=   Evaluate    ${i}+1
+    END
+
+Check DEC Order
+    ${i}=   Set Variable    0
+    ${weblist}=     Get WebElements     class:inventory_item_name
+    FOR     ${element}  IN  @{weblist}
+        ${temp}=    Get From List       ${DEC}      ${i}
+        Should Be Equal     ${element.text}     ${temp}
+        ${i}=   Evaluate    ${i}+1
+    END
+
+Check LOHI Order
+    ${i}=   Set Variable    0
+    ${weblist}=     Get WebElements     class:inventory_item_name
+    FOR     ${element}  IN  @{weblist}
+        ${temp}=    Get From List       ${LOHI}      ${i}
+        Should Be Equal     ${element.text}     ${temp}
+        ${i}=   Evaluate    ${i}+1
+    END
+
+Check HILO Order
+    ${i}=   Set Variable    0
+    ${weblist}=     Get WebElements     class:inventory_item_name
+    FOR     ${element}  IN  @{weblist}
+        ${temp}=    Get From List       ${HILO}      ${i}
+        Should Be Equal     ${element.text}     ${temp}
+        ${i}=   Evaluate    ${i}+1
+    END
